@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            position: relative;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        section {
+            display: flex;
+            align-items: left;
+            flex-direction: column;
+            width: 50%;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-left: 150px;
+        }
+
+        .episode-info {
+            margin-left: 150px;
+        }
+
+        .episode-details {
+            margin-top: 20px;
+        }
+
+        .filler-tag {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <h1>Episode {{ episode_info.episode_number }}</h1>
+        <h2>{{ episode_info.title }}</h2>
+        <div class="episode-info">
+            <div class="episode-details">
+                <p><strong>Chapitres adaptés:</strong> {{ episode_info.chapters }}</p>
+                <p><strong>Scénario:</strong> {{ episode_info.Screenplay }}</p>
+                <p><strong>Direction:</strong> {{ episode_info.Direction }}</p>
+                <p><strong>Animation:</strong> {{ episode_info.Animation }}</p>
+                <p><strong>Date de sortie:</strong> {{ episode_info.release_date }}</p>
+                <p><strong>Durée:</strong> {{ episode_info.duration }} minutes</p>
+                {% if episode_info.filler == '1' %}
+                    <span class="filler-tag">Épisode Filler</span>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    
+    <section class="section_droite">
+        <div id="button_section">
+            <button class="button">Statistiques</button>
+            <button class="button">Informations</button>
+        </div>
+
+        <div id="menus">
+            <div class="menu" id="menu-plot">
+                <div id="plot-div">{{ plot_div|safe }}</div>
+            </div>
+            <div class="menu" id="menu-other">
+                Informations supplémentaires
+            </div>
+        </div>
+    </section>
+    <script src="static/js/pokemon_menu.js"></script>
+</body>
+</html> 

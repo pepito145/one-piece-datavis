@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+         body {
+            position: relative;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        section {
+            display: flex;
+            align-items: left;
+            flex-direction: column;
+            width: 50%;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-left: 150px;
+        }
+       
+        .types {
+            display: flex;
+            width: 400px;
+        }
+
+        .section_droite {
+            display: flex;
+            flex-direction: column;
+            align-items: right;
+            margin-right: 10px;
+        }
+
+        .image-pokemon{
+            margin-left: 100px;
+            height : 250px;
+            width: 250px;
+        }
+
+        .menu {
+            display: none;
+            padding: 10px;
+        }
+        
+        /* Section pour un ID particulier */
+        #button_section {
+            display: flex;
+            gap: 10px;
+            width: 60%;
+            height: 20%;
+            padding: 10px;
+            align-items: flex-start;
+        }
+
+
+        /* Style des balises d'un tableau */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-left: 150px;
+            margin-top: 150px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <section>
+        <img class="image-pokemon" src="{{ url_for('static', filename='images/sprites/' + request.args.get('pokedex_number') + '.png') }}" alt="Dracaufeu">
+        <h1>{{ request.args.get('name') }}</h1>
+        <h1>N° Pokedex : {{ request.args.get('pokedex_number') }}</h1>
+        <div class="types">
+            <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type1'] + '.png') }}" alt="{{ pokemon_info['type1'] }}">
+            {% if pokemon_info['type2'] != '' %}
+            <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type2'] + '.png') }}" alt="{{ pokemon_info['type2'] }}">
+            {%endif%}
+        </div>
+    </section>
+    
+    <section class="section_droite">
+        <!-- Section pour les boutons alignés en haut à droite -->
+        <div id="button_section">
+            <!-- Utilisez la balise button pour créer des boutons cliquables -->
+            <button class="button">Test Plotly</button>
+            <button class="button">Test Other Menu</button>
+        </div>
+
+        <!-- Section pour les menus -->
+        <div id="menus">
+            <!-- Menu Statistiques -->
+            <div class="menu" id="menu-plot">
+                
+                <div id="plot-div">{{ plot_div|safe }}</div>
+
+            </div>
+            <!-- Menu Autre -->
+            <div class="menu" id="menu-other">
+                Other menu
+            <div>
+        </div>
+    </section>
+    <script src="static/js/pokemon_menu.js"></script>
+</body>
+</html>

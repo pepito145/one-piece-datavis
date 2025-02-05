@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Piece Episodes</title>
+    <link rel="icon" type="image/png" href="static/images/strawhat-logo.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: 'One Piece';
+            src: url('/static/font/one_piece.ttf') format('truetype');
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to right, #1a1a1a, #2c2c2c);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .site-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'One Piece', sans-serif;
+        }
+
+        .site-title img {
+            height: 40px;
+            width: auto;
+        }
+
+        .site-title span {
+            font-family: 'One Piece', sans-serif;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 5px 15px;
+            width: 300px;
+            margin-left: auto;
+            transition: all 0.3s ease;
+        }
+
+        .search-container:focus-within {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .search-icon {
+            color: #7AB51D;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        #searchInput {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            padding: 8px 0;
+            outline: none;
+        }
+
+        #searchInput::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #7AB51D;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #7AB51D;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .shelves-container {
+            margin-top: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 250px;
+            padding: 20px;
+        }
+
+        .shelf {
+            height: 30px;
+            position: relative;
+            background: linear-gradient(
+                to bottom,
+                #8B5E3C 0%,    /* Bois foncé en haut */
+                #A0522D 20%,   /* Transition */
+                #CD853F 50%,   /* Bois clair au milieu */
+                #8B4513 80%,   /* Ombre */
+                #654321 100%   /* Ombre plus profonde */
+            );
+            box-shadow: 
+                0 2px 10px rgba(0,0,0,0.4),
+                inset 0 2px 3px rgba(255,255,255,0.2),  /* Brillance en haut */
+                inset 0 -2px 3px rgba(0,0,0,0.2);       /* Ombre en bas */
+        }
+
+        /* Effet de bordure de l'étagère */
+        .shelf::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(
+                to bottom,
+                #8B5E3C 0%,
+                #A0522D 100%
+            );
+            border-radius: 4px 4px 0 0;
+        }
+
+        /* Effet d'ombre sous l'étagère */
+        .shelf::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 10%;
+            right: 10%;
+            height: 20px;
+            background: rgba(0,0,0,0.2);
+            filter: blur(8px);
+            border-radius: 50%;
+        }
+
+        .manga-row {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            height: 160px;
+            padding: 0 20px;  /* Marge sur les côtés */
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        /* Support d'étagère gauche */
+        .shelf-support-left {
+            position: absolute;
+            left: 40px;
+            bottom: -60px;
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(
+                to right,
+                #654321 0%,
+                #8B4513 30%,
+                #A0522D 70%,
+                #8B5E3C 100%
+            );
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* Support d'étagère droit */
+        .shelf-support-right {
+            position: absolute;
+            right: 40px;
+            bottom: -60px;
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(
+                to right,
+                #8B5E3C 0%,
+                #A0522D 30%,
+                #8B4513 70%,
+                #654321 100%
+            );
+            border-radius: 0 0 5px 5px;
+        }
+
+        .manga {
+            width: 40px;
+            height: 160px;
+            background: #000000;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-origin: bottom center;
+            /* Effets de volume */
+            box-shadow:
+                /* Ombre portée */
+                0 5px 15px rgba(0,0,0,0.3),
+                /* Effet de volume sur la droite */
+                2px 0 3px rgba(255,255,255,0.1),
+                /* Effet de volume sur la gauche */
+                -1px 0 2px rgba(0,0,0,0.5),
+                /* Effet de relief en haut */
+                0 -1px 2px rgba(255,255,255,0.1);
+            /* Effet de perspective */
+            transform: perspective(500px) rotateY(-2deg);
+        }
+
+        /* Effet de la tranche des pages sur la droite */
+        .manga::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                rgba(255,255,255,0.1),
+                rgba(255,255,255,0.2) 50%,
+                rgba(0,0,0,0.3)
+            );
+            z-index: 2;
+        }
+
+        /* Bandeau SHONEN MANGA (horizontal sur deux lignes) */
+        .manga::before {
+            content: 'SHONEN\A MANGA';  /* \A force un saut de ligne */
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: #7AB51D;
+            color: white;
+            font-size: 4px;  /* Réduit pour tenir sur deux lignes */
+            text-align: center;
+            line-height: 6px;  /* Moitié de la hauteur pour centrer les deux lignes */
+            font-weight: bold;
+            white-space: pre;  /* Préserve le saut de ligne */
+        }
+
+        /* Titre ONE PIECE (vertical) */
+        .title {
+            position: absolute;
+            top: 45px;
+            right: 50%;
+            transform: translateX(50%) rotate(-90deg);
+            transform-origin: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        /* Numéro du tome (horizontal) */
+        .volume-number {
+            position: absolute;
+            top: 95px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Nom de l'auteur (deux lignes verticales) */
+        .author {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 0;  /* Pas d'espace */
+            right: 50%;
+            transform: translateX(50%);
+        }
+
+        .author-first, .author-last {
+            color: white;
+            font-size: 4px;
+            font-weight: bold;
+            white-space: nowrap;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            letter-spacing: -0.2px;
+            margin-right: 2px;  /* Valeur négative pour rapprocher */
+        }
+
+        .author-last {
+            margin-left: -10px;  /* Valeur négative pour rapprocher */
+        }
+
+        /* Logo Glénat (horizontal) */
+        .publisher {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: #7AB51D;
+            color: white;
+            font-size: 6px;
+            text-align: center;
+            line-height: 12px;
+            font-weight: bold;
+        }
+
+        .manga:hover {
+            transform: scale(1.5) perspective(500px) rotateY(0deg);
+            z-index: 100;
+            box-shadow: 
+                /* Ombre portée plus prononcée au hover */
+                0 10px 25px rgba(0,0,0,0.4),
+                /* Effet de volume amplifié */
+                3px 0 5px rgba(255,255,255,0.15),
+                -2px 0 3px rgba(0,0,0,0.6),
+                0 -1px 3px rgba(255,255,255,0.15);
+        }
+
+        /* Garde les styles existants pour la grille d'épisodes */
+        .episodeGrid {
+            margin-top: 150px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 20px;
+            padding: 20px;
+        }
+
+        .episodeBox {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Style de base pour toutes les infobulles */
+        .volume-tooltip {
+            position: absolute;
+            bottom: 120%;  /* Au-dessus du tome */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            width: 150px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            font-size: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 99999;  /* Z-index très élevé pour passer au-dessus de tout */
+        }
+
+        /* Flèche de l'infobulle */
+        .volume-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.95) transparent transparent transparent;
+        }
+
+        /* Affichage de l'infobulle au hover */
+        .manga:hover .volume-tooltip {
+            opacity: 1;
+            visibility: visible;
+            bottom: 130%;  /* Léger décalage vers le haut au hover */
+        }
+
+        /* Augmenter aussi le z-index du manga au hover */
+        .manga:hover {
+            z-index: 99999;  /* Même z-index que l'infobulle */
+        }
+
+        .volume-tooltip h3 {
+            margin: 0 0 6px 0;  /* Réduit les marges */
+            color: #7AB51D;
+            font-size: 11px;  /* Réduit la taille du titre */
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 4px;
+        }
+
+        .chapter-list, .episode-list {
+            margin-top: 4px;  /* Réduit les marges */
+            padding: 4px;  /* Réduit le padding */
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            font-size: 9px;  /* Réduit encore la taille de police */
+            line-height: 1.2;
+        }
+
+        .chapter-list strong, .episode-list strong {
+            color: #7AB51D;
+            font-size: 9px;
+        }
+
+        /* Script pour gérer la position de l'infobulle */
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const mangas = document.querySelectorAll('.manga');
+                const windowWidth = window.innerWidth;
+                const centerPoint = windowWidth / 2;
+
+                mangas.forEach(manga => {
+                    manga.addEventListener('mouseenter', e => {
+                        const tooltip = manga.querySelector('.volume-tooltip');
+                        const mangaRect = manga.getBoundingClientRect();
+                        const mangaCenter = mangaRect.left + (mangaRect.width / 2);
+
+                        if (mangaCenter > centerPoint) {
+                            // Si le tome est à droite, l'infobulle va à gauche
+                            tooltip.style.right = '';
+                            tooltip.style.left = '20px';
+                        } else {
+                            // Si le tome est à gauche, l'infobulle va à droite
+                            tooltip.style.left = '';
+                            tooltip.style.right = '20px';
+                        }
+                    });
+                });
+            });
+        </script>
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="site-title">
+            <img src="static/images/strawhat-logo.png" alt="Logo One Piece">
+            <span>One Piece</span>
+        </a>
+        
+        <div class="nav-links">
+            <a href="#volumes" class="nav-link">Volumes</a>
+            <a href="#episodes" class="nav-link">Épisodes</a>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher un épisode...">
+            </div>
+        </div>
+    </header>
+
+    <div class="shelves-container">
+        <!-- Première étagère (volumes 1-50) -->
+        <div class="shelf first-shelf">
+            <div class="shelf-support-left"></div>
+            <div class="shelf-support-right"></div>
+            <div class="manga-row">
+                {% for i in range(1, 51) %}
+                <div class="manga" data-volume="{{ i }}">
+                    <div class="title">ONE PIECE</div>
+                    <div class="volume-number">{{ i }}</div>
+                    <div class="author">
+                        <div class="author-first">EIICHIRO</div>
+                        <div class="author-last">ODA</div>
+                    </div>
+                    <div class="publisher">Glénat</div>
+                    <div class="volume-tooltip">
+                        <h3>Tome {{ i }}</h3>
+                        <div class="chapter-list">
+                            <strong>Chapitres :</strong> {{ volume_data[i]['chapters'] }}
+                        </div>
+                        <div class="episode-list">
+                            <strong>Épisodes :</strong> {{ volume_data[i]['episodes'] }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Deuxième étagère (volumes 51-105) -->
+        <div class="shelf">
+            <div class="shelf-support-left"></div>
+            <div class="shelf-support-right"></div>
+            <div class="manga-row">
+                {% for i in range(51, 106) %}
+                <div class="manga" data-volume="{{ i }}">
+                    <div class="title">ONE PIECE</div>
+                    <div class="volume-number">{{ i }}</div>
+                    <div class="author">
+                        <div class="author-first">EIICHIRO</div>
+                        <div class="author-last">ODA</div>
+                    </div>
+                    <div class="publisher">Glénat</div>
+                    <div class="volume-tooltip">
+                        <h3>Tome {{ i }}</h3>
+                        <div class="chapter-list">
+                            <strong>Chapitres :</strong> {{ volume_data[i]['chapters'] }}
+                        </div>
+                        <div class="episode-list">
+                            <strong>Épisodes :</strong> {{ volume_data[i]['episodes'] }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des épisodes -->
+    <div id="result" class="episodeGrid">
+        {% for episode in episodes %}
+        <div class="episodeBox">
+            <div class="episodeNumber">Episode {{ episode.episode_number }}</div>
+            <div class="episodeTitle">{{ episode.title }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{% for episode in episodes %}
+    <div class="episodeBox" onclick="redirectToEpisode('{{ episode.episode_number }}', '{{ episode.title }}')">
+        <div class="episodeNumber">Episode {{ episode.episode_number }}</div>
+        <div class="episodeTitle">{{ episode.title }}</div>
+    </div>
+{% endfor %}
