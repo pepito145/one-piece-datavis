@@ -22,7 +22,7 @@ for index, row in df.iterrows():
             # S'assurer que le titre est une chaîne de caractères
             title = str(row["Title"]) if pd.notna(row["Title"]) else ""
             
-            episode = {
+            episode = { 
                 "episode_number": episode_num,
                 "title": title
             }
@@ -89,9 +89,11 @@ def get_chapters_by_volume():
         if volume in chapters_by_volume and chapters_by_volume[volume]:
             min_chapter = min(chapters_by_volume[volume])
             max_chapter = max(chapters_by_volume[volume])
-            formatted_chapters[volume] = f"{min_chapter}-{max_chapter}"
+            # Créer la liste de tous les chapitres dans l'intervalle
+            all_chapters = list(range(min_chapter, max_chapter + 1))
+            formatted_chapters[volume] = all_chapters
         else:
-            formatted_chapters[volume] = "N/A"
+            formatted_chapters[volume] = []
     
     # Debug print pour voir le résultat final
     print("\nContenu de formatted_chapters:")
@@ -106,10 +108,11 @@ def index():
     chapters_by_volume = get_chapters_by_volume()
     
     # S'assurer que tous les volumes ont une entrée
-    for volume in range(1, 106):
-        volume_data[volume] = {
-            'chapters': chapters_by_volume.get(volume, "N/A"),  # Utiliser .get() avec une valeur par défaut
-            'episodes': "Episodes correspondants"
+    for i in range(1, 106):
+        volume_data[i] = {
+            'chapters': chapters_by_volume.get(i, []),
+            'episodes': "Episodes correspondants",
+            'volume_number': i  # Ajouter le numéro du volume
         }
     
     return render_template('index.html', volume_data=volume_data)
@@ -123,4 +126,4 @@ def search():
     return render_template('search_results.html', episodes=episodes)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    
