@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import json
 import csv
@@ -107,12 +107,40 @@ def index():
     volume_data = {}
     chapters_by_volume = get_chapters_by_volume()
     
-    # S'assurer que tous les volumes ont une entrée
-    for i in range(1, 106):
-        volume_data[i] = {
-            'chapters': chapters_by_volume.get(i, []),
-            'episodes': "Episodes correspondants",
-            'volume_number': i  # Ajouter le numéro du volume
+    # Lire le CSV qui contient les associations chapitre-épisodes
+    chapters_episodes_df = pd.read_csv("static/data/onepiece_chapters_episodes_sorted.csv")
+    
+    # Créer un dictionnaire qui associe les chapitres à leurs épisodes
+    chapter_to_episodes = {}
+    
+    # Remplir le dictionnaire avec les données du CSV
+    for _, row in chapters_episodes_df.iterrows():
+        chapter = int(row['Chapitre'])
+        episodes_str = str(row['Épisodes'])
+        # Extraire les numéros d'épisodes (ignorer "Episode of East Blue" etc)
+        episodes = []
+        for ep in episodes_str.split(', '):
+            if ep.startswith('Episode ') and not any(x in ep for x in ['of', 'East', 'Blue']):
+                ep_num = ep.split('Episode ')[1]
+                episodes.append(ep_num)
+        chapter_to_episodes[chapter] = episodes
+    
+    # Créer les données pour chaque volume
+    for volume in range(1, 106):
+        chapters = chapters_by_volume.get(volume, [])
+        episodes = []
+        
+        # Récupérer tous les épisodes pour les chapitres de ce volume
+        for chapter in chapters:
+            if chapter in chapter_to_episodes:
+                episodes.extend(chapter_to_episodes[chapter])
+        
+        # Enlever les doublons et trier
+        episodes = sorted(list(set(episodes)), key=int)
+        
+        volume_data[volume] = {
+            'chapters': chapters,
+            'episodes': episodes
         }
     
     return render_template('index.html', volume_data=volume_data)
@@ -125,5 +153,18 @@ def search():
         return render_template('search_results.html', episodes=filtered)
     return render_template('search_results.html', episodes=episodes)
 
-if __name__ == '__main__':
+@app.route('/api/episode/<episode_number>')
+def get_episode_details(episode_number):
+    # Nettoyer le numéro d'épisode
+    episode_number = f"Episode {episode_number}"
     
+    # Chercher l'épisode dans le DataFrame
+    episode = df[df['Episode_num'] == episode_number].to_dict('records')
+    
+    if episode:
+        return jsonify(episode[0])
+    else:
+        return jsonify({"error": "Episode not found"}), 404
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -465,6 +465,7 @@
             height: 100%;
             transform-style: preserve-3d;
             transform: rotateX(30deg);
+            z-index: 1;
         }
 
         /* Reliure centrale */
@@ -482,7 +483,7 @@
             box-shadow: 
                 inset -5px 0 10px rgba(0,0,0,0.5),
                 inset 5px 0 10px rgba(0,0,0,0.5);
-            z-index: 1;
+            z-index: 9998; /* Augmenté pour être toujours visible */
         }
 
         /* Pages et reliure */
@@ -493,7 +494,7 @@
             justify-content: center;
             gap: 40px; /* Réduit l'espace pour la reliure */
             position: relative;
-            z-index: 0;
+            z-index: 1;
         }
 
         /* Style commun pour les pages */
@@ -507,6 +508,7 @@
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
             border-radius: 5px;
+            z-index: 1;
         }
 
         /* Page gauche */
@@ -623,6 +625,235 @@
             color: #8b7355;
             transform: rotate(-45deg);
         }
+
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .chapter-item, .episode-item {
+            cursor: pointer;
+            padding: 8px 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .chapter-item:hover, .episode-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .chapter-number, .episode-number {
+            font-size: 1.1em;
+            color: #2c2c2c;
+        }
+
+        /* Animation pour tourner la page */
+        @keyframes turnPage {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(-180deg);
+            }
+        }
+
+        .page-turn {
+            animation: turnPage 0.6s ease-in-out;
+            transform-origin: left center;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #2c2c2c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #444;
+        }
+
+        /* Style du conteneur de détail */
+        .detail-page {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+            perspective: 2000px;
+        }
+
+        /* Pages gauche et droite de la page de détails */
+        .detail-left-page {
+            position: absolute;
+            width: 42%;
+            height: 90%;
+            margin-top: 1.5%;
+            left: 2.20%;
+            background: #f4e4bc;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            padding: 30px;
+            transform-origin: right;
+            z-index: 2;
+        }
+
+        .detail-right-page {
+            position: absolute;
+            width: 42%;
+            height: 90%;
+            margin-top: 1.5%;
+            left: 50%;
+            background: #f4e4bc;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            padding: 30px;
+            transform-origin: left;
+            z-index: 1;
+        }
+
+        /* Reliure centrale */
+        .detail-page::before {
+            content: '';
+            position: absolute;
+            top: 0%;
+            margin-top: 1.5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 100%;
+            background: #654321;
+            border-radius: 5px;
+            box-shadow: 
+                inset -5px 0 10px rgba(0,0,0,0.5),
+                inset 5px 0 10px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        /* Contenu des pages */
+        .detail-content {
+            height: 85%;
+            padding: 20px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 8px;
+            position: relative;
+            z-index: 9998;
+            overflow-y: auto;
+        }
+
+        /* Styles pour l'animation de la page */
+        .page-flip-container {
+            position: absolute;
+            width: 100%;
+            height: 90%;
+            margin-top: 1.5%;
+            top: 0;
+            left: 0;
+            perspective: 2000px;
+            z-index: 9999; /* Très haut pour être au-dessus de tout */
+        }
+
+        .flipping-page {
+            position: absolute;
+            width: 50%;
+            height: 111%;
+            right: 0;
+            transform-origin: left;
+            background: #f4e4bc;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            border-left: 2px solid rgba(139, 69, 19, 0.3);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 10000; /* Plus haut que le conteneur */
+        }
+
+        @keyframes pageFlip {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(-180deg);
+            }
+        }
+
+        @keyframes pageFlipReverse {
+            0% {
+                transform: rotateY(-180deg);
+            }
+            100% {
+                transform: rotateY(0deg);
+            }
+        }
+
+        .flipping-page.flip {
+            animation: pageFlip 1s ease-in-out forwards;
+        }
+
+        .flipping-page.flip-reverse {
+            animation: pageFlipReverse 1s ease-in-out forwards;
+        }
+
+        /* Supprimer l'overlay ou réduire son opacité */
+        .page-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0); /* Complètement transparent */
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 9997;
+        }
+
+        .page-overlay.active {
+            opacity: 0; /* Reste transparent même quand actif */
+        }
+
+        /* Style pour les détails d'épisode */
+        .episode-detail {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .episode-title {
+            font-family: 'Pirata One', cursive;
+            font-size: 2em;
+            color: #8B4513;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .episode-info {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #8B4513;
+        }
+
+        .episode-info-label {
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 5px;
+        }
+
+        .episode-synopsis {
+            line-height: 1.6;
+            text-align: justify;
+        }
     </style>
 </head>
 <body>
@@ -723,7 +954,9 @@
                         <div class="page-header">
                             <h2 class="page-title">Chapitres</h2>
                         </div>
-                        <div class="chapters-content"></div>
+                        <div class="chapters-content">
+                            <!-- Le contenu sera rempli par JavaScript -->
+                        </div>
                     </div>
                 </div>
                 <div class="page right">
@@ -731,7 +964,9 @@
                         <div class="page-header">
                             <h2 class="page-title">Épisodes</h2>
                         </div>
-                        <div class="episodes-content"></div>
+                        <div class="episodes-content">
+                            <!-- Le contenu sera rempli par JavaScript -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -756,12 +991,30 @@
                 document.querySelector('.book-volume-title').textContent = 'Tome N°' + volumeNumber;
                 
                 // Afficher les chapitres du tome
-                document.querySelector('.chapters-content').innerHTML = 
-                    '<div class="content-item">Chapitres : ' + volumeInfo.chapters.join(', ') + '</div>';
+                const chaptersHtml = volumeInfo.chapters.map(chapter => `
+                    <div class="chapter-item" data-chapter="${chapter}">
+                        <span class="chapter-number">Chapitre ${chapter}</span>
+                    </div>
+                `).join('');
+                
+                document.querySelector('.chapters-content').innerHTML = `
+                    <div class="content-list">
+                        ${chaptersHtml}
+                    </div>
+                `;
                 
                 // Afficher les épisodes du tome
-                document.querySelector('.episodes-content').innerHTML = 
-                    '<div class="content-item">Épisodes : ' + volumeInfo.episodes + '</div>';
+                const episodesHtml = volumeInfo.episodes.map(episode => `
+                    <div class="episode-item" data-episode="${episode}">
+                        <span class="episode-number">Épisode ${episode}</span>
+                    </div>
+                `).join('');
+                
+                document.querySelector('.episodes-content').innerHTML = `
+                    <div class="content-list">
+                        ${episodesHtml}
+                    </div>
+                `;
                 
                 // Afficher le livre
                 bookContainer.style.display = 'block';
@@ -772,8 +1025,31 @@
                     behavior: 'smooth',
                     block: 'start'
                 });
+
+                // Réattacher les event listeners pour les nouveaux éléments
+                attachClickHandlers();
             });
         });
+
+        function attachClickHandlers() {
+            const chapters = document.querySelectorAll('.chapter-item');
+            const episodes = document.querySelectorAll('.episode-item');
+            const pages = document.querySelector('.pages-container');
+
+            chapters.forEach(chapter => {
+                chapter.addEventListener('click', () => {
+                    const chapterNum = chapter.dataset.chapter;
+                    showDetails('chapter', chapterNum);
+                });
+            });
+
+            episodes.forEach(episode => {
+                episode.addEventListener('click', () => {
+                    const episodeNum = episode.dataset.episode;
+                    showDetails('episode', episodeNum);
+                });
+            });
+        }
 
         if (closeButton) {
             closeButton.innerHTML = '×';
@@ -781,6 +1057,202 @@
             
             closeButton.addEventListener('click', function() {
                 bookContainer.style.display = 'none';
+            });
+        }
+
+        function showDetails(type, number) {
+            const book = document.querySelector('.book');
+            const pages = document.querySelector('.pages-container');
+            
+            // Créer le conteneur de l'animation
+            const flipContainer = document.createElement('div');
+            flipContainer.className = 'page-flip-container';
+            
+            // Créer la page qui tourne
+            const flippingPage = document.createElement('div');
+            flippingPage.className = 'flipping-page';
+            flipContainer.appendChild(flippingPage);
+            book.appendChild(flipContainer);
+            
+            // Créer la page de détails
+            const detailPage = document.createElement('div');
+            detailPage.className = 'detail-page';
+
+            // Créer la page gauche
+            const leftPage = document.createElement('div');
+            leftPage.className = 'detail-left-page';
+            leftPage.innerHTML = `
+                <button class="back-button">← Retour</button>
+                <h2>${type} ${number}</h2>
+                <div class="detail-content">
+                    <p>Informations sur le ${type.toLowerCase()} ${number}...</p>
+                </div>
+            `;
+
+            // Créer la page droite
+            const rightPage = document.createElement('div');
+            rightPage.className = 'detail-right-page';
+            rightPage.innerHTML = `
+                <div class="detail-content">
+                    <p>Détails supplémentaires...</p>
+                </div>
+            `;
+
+            // Ajouter les pages au conteneur
+            detailPage.appendChild(leftPage);
+            detailPage.appendChild(rightPage);
+            book.appendChild(detailPage);
+
+            // Séquence d'animation
+            requestAnimationFrame(() => {
+                flippingPage.classList.add('flip');
+            });
+
+            // Attendre la fin de l'animation
+            flippingPage.addEventListener('animationend', () => {
+                pages.style.display = 'none';
+                detailPage.style.display = 'block';
+                flipContainer.remove();
+            });
+
+            // Gérer le bouton retour
+            detailPage.querySelector('.back-button').addEventListener('click', () => {
+                const newFlipContainer = document.createElement('div');
+                newFlipContainer.className = 'page-flip-container';
+                const newFlippingPage = document.createElement('div');
+                newFlippingPage.className = 'flipping-page';
+                newFlipContainer.appendChild(newFlippingPage);
+                book.appendChild(newFlipContainer);
+
+                requestAnimationFrame(() => {
+                    newFlippingPage.classList.add('flip-reverse');
+                });
+
+                newFlippingPage.addEventListener('animationend', () => {
+                    detailPage.style.display = 'none';
+                    pages.style.display = 'flex';
+                    newFlipContainer.remove();
+                });
+            });
+        }
+
+        function showEpisodeDetails(episodeNumber) {
+            console.log('Recherche de l\'épisode numéro:', episodeNumber);
+            
+            fetch(`/api/episode/${episodeNumber}`)
+                .then(response => {
+                    console.log('Réponse de l\'API:', response.status);
+                    return response.json();
+                })
+                .then(episode => {
+                    console.log('Données de l\'épisode récupérées:', episode);
+                    
+                    // Contenu de la page gauche
+                    const leftContent = `
+                        <div class="episode-detail">
+                            <h1 class="episode-title">Episode ${episode.Episode_num}</h1>
+                            <div class="episode-info">
+                                <div class="episode-info-label">Titre</div>
+                                <div>${episode.Title || 'Non disponible'}</div>
+                            </div>
+                            <div class="episode-info">
+                                <div class="episode-info-label">Date de diffusion</div>
+                                <div>${episode.Release_Date || 'Non disponible'}</div>
+                            </div>
+                            <div class="episode-info">
+                                <div class="episode-info-label">Durée</div>
+                                <div>${episode.Duration || '23 minutes'}</div>
+                            </div>
+                        </div>`;
+
+                    // Contenu de la page droite
+                    const rightContent = `
+                        <div class="episode-detail">
+                            <div class="episode-info">
+                                <div class="episode-info-label">Synopsis</div>
+                                <div class="episode-synopsis">${episode.Synopsis || 'Synopsis non disponible'}</div>
+                            </div>
+                            ${episode.Notes ? `
+                                <div class="episode-info">
+                                    <div class="episode-info-label">Notes</div>
+                                    <div>${episode.Notes}</div>
+                                </div>
+                            ` : ''}
+                        </div>`;
+
+                    console.log('Contenu généré - gauche:', leftContent);
+                    console.log('Contenu généré - droite:', rightContent);
+
+                    // Mettre à jour le contenu des pages
+                    const leftPage = document.querySelector('.detail-left-page');
+                    const rightPage = document.querySelector('.detail-right-page');
+                    
+                    console.log('Éléments de page trouvés:', {
+                        leftPage: !!leftPage,
+                        rightPage: !!rightPage
+                    });
+
+                    leftPage.innerHTML = leftContent;
+                    rightPage.innerHTML = rightContent;
+
+                    // Afficher la page de détail
+                    const detailPage = document.querySelector('.detail-page');
+                    console.log('Page de détail trouvée:', !!detailPage);
+                    detailPage.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Erreur détaillée lors de la récupération des détails de l\'épisode:', error);
+                });
+        }
+
+        // Dans la partie où on crée les épisodes
+        function createEpisodeElement(episode) {
+            const episodeElement = document.createElement('div');
+            episodeElement.classList.add('episode');
+            episodeElement.textContent = `Episode ${episode}`;
+            
+            // Ajouter l'événement click
+            episodeElement.addEventListener('click', () => {
+                showEpisodeDetails(episode);
+                
+                // Animation de la page qui tourne
+                const pages = document.querySelector('.pages-container');
+                const detailPage = document.querySelector('.detail-page');
+                
+                // Créer le conteneur et la page pour l'animation
+                const flipContainer = document.createElement('div');
+                flipContainer.classList.add('page-flip-container');
+                
+                const flippingPage = document.createElement('div');
+                flippingPage.classList.add('flipping-page');
+                
+                flipContainer.appendChild(flippingPage);
+                document.body.appendChild(flipContainer);
+                
+                // Déclencher l'animation
+                requestAnimationFrame(() => {
+                    flippingPage.classList.add('flip');
+                });
+                
+                // À la fin de l'animation
+                flippingPage.addEventListener('animationend', () => {
+                    pages.style.display = 'none';
+                    detailPage.style.display = 'block';
+                    flipContainer.remove();
+                });
+            });
+            
+            return episodeElement;
+        }
+
+        // Dans la partie où on affiche les épisodes d'un volume
+        function displayEpisodes(episodes) {
+            const episodeContainer = document.querySelector('.episodes-content');
+            episodeContainer.innerHTML = '';
+            
+            episodes.forEach(episode => {
+                const episodeElement = createEpisodeElement(episode);
+                episodeContainer.appendChild(episodeElement);
             });
         }
     });
