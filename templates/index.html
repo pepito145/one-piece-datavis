@@ -746,7 +746,7 @@
         .detail-content {
             height: 85%;
             padding: 20px;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.0);
             border-radius: 8px;
             position: relative;
             z-index: 9998;
@@ -854,6 +854,237 @@
             line-height: 1.6;
             text-align: justify;
         }
+
+        .episode-title {
+            font-family: 'One Piece', sans-serif;
+            font-size: 2em;
+            color: #8B4513;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .episode-subtitle {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .info-group {
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #8B4513;
+        }
+
+        .info-group h4 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .info-item .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .manga-info p {
+            line-height: 1.6;
+            text-align: justify;
+            color: #444;
+        }
+
+        .detail-content {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .episode-title {
+            font-family: 'One Piece', sans-serif;
+            font-size: 2em;
+            color: #8B4513;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .episode-subtitle {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .info-block {
+            margin-bottom: 25px;
+            padding: 15px 0;
+            border-bottom: 2px solid rgba(139, 69, 19, 0.2);
+        }
+
+        .info-block:last-child {
+            border-bottom: none;
+        }
+
+        .info-block h4 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .info-row .label {
+            font-weight: bold;
+            color: #555;
+            flex: 0 0 120px;
+        }
+
+        .info-row .value {
+            flex: 1;
+            padding-left: 15px;
+            color: #333;
+        }
+
+        .episode-description {
+            line-height: 1.6;
+            color: #444;
+            text-align: justify;
+        }
+
+        .episode-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .episode-title {
+            font-family: 'One Piece', sans-serif;
+            font-size: 2.5em;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .episode-subtitle {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .japanese-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .kanji {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .romaji {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+
+        .info-block {
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+        }
+
+        .info-block:last-child {
+            border-bottom: none;
+        }
+
+        .info-block h4 {
+            color: #8B4513;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .info-row .label {
+            flex: 0 0 100px;
+            color: #666;
+        }
+
+        .info-row .value {
+            flex: 1;
+            padding-left: 20px;
+            color: #333;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 15px;
+            background: none;
+            color: #8B4513;
+            border: 2px solid #8B4513;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: #8B4513;
+            color: white;
+        }
+
+        /* Ajouter du style uniquement pour les liens d'épisodes dans les détails */
+        .detail-content .episode-link {
+            cursor: pointer;
+            color: #D35400;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+        .detail-content .episode-link:hover {
+            color: #A04000;
+        }
+        .episode-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            max-width: 80%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .overlay-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
@@ -865,7 +1096,7 @@
         
         <div class="nav-links">
             <a href="#volumes" class="nav-link">Volumes</a>
-            <a href="#episodes" class="nav-link">Épisodes</a>
+            <a href="/episodes" class="nav-link">Épisodes</a>
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchInput" placeholder="Rechercher un épisode...">
@@ -975,6 +1206,39 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        
+        // Gestion de la recherche
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length > 0) {
+                // Créer une animation de transition
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: #2c2c2c;
+                    z-index: 9999;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                document.body.appendChild(overlay);
+
+                // Animer l'overlay
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                }, 10);
+
+                // Rediriger vers la page des épisodes avec le paramètre de recherche
+                setTimeout(() => {
+                    window.location.href = `/episodes?search=${encodeURIComponent(query)}`;
+                }, 300);
+            }
+        });
+
         const mangas = document.querySelectorAll('.manga');
         const bookContainer = document.querySelector('.book-container');
         const closeButton = document.querySelector('.close-book');
@@ -1029,6 +1293,7 @@
                 // Réattacher les event listeners pour les nouveaux éléments
                 attachClickHandlers();
             });
+
         });
 
         function attachClickHandlers() {
@@ -1067,11 +1332,11 @@
                     .then(data => {
                         // Afficher l'alerte de vérification
                         if (data.found) {
-                            alert(`Épisode ${data.episode_number} trouvé !\n\n` +
+                            /*alert(`Épisode ${data.episode_number} trouvé !\n\n` +
                                   `Titre: ${data.title}\n` +
                                   `Scénario: ${data.screenplay}\n` +
                                   `Direction: ${data.direction}\n` +
-                                  `Chapitres adaptés: ${data.chapters}`);
+                                  `Chapitres adaptés: ${data.chapters}`);*/
                             
                             // Puis continuer avec l'affichage des détails
                             const book = document.querySelector('.book');
@@ -1096,9 +1361,27 @@
                             leftPage.className = 'detail-left-page';
                             leftPage.innerHTML = `
                                 <button class="back-button">← Retour</button>
-                                <h2>${type} ${number}</h2>
                                 <div class="detail-content">
-                                    <p>Informations sur l'épisode ${number}</p>
+                                    <div class="episode-header">
+                                        <h2 class="episode-title">Épisode ${data.episode_number}</h2>
+                                        <h3 class="episode-subtitle">${data.title}</h3>
+                                        <div class="japanese-title">
+                                            <span class="kanji">${data.kanji}</span>
+                                            <span class="romaji">${data.romaji}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-block">
+                                        <h4>Production</h4>
+                                        <div class="info-row">
+                                            <span class="label">Scénario</span>
+                                            <span class="value">${data.screenplay}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">Direction</span>
+                                            <span class="value">${data.direction}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             `;
 
@@ -1107,7 +1390,25 @@
                             rightPage.className = 'detail-right-page';
                             rightPage.innerHTML = `
                                 <div class="detail-content">
-                                    <p>Détails de l'épisode ${number}</p>
+                                    <div class="info-block">
+                                        <h4>Adaptation</h4>
+                                        <div class="info-row">
+                                            <span class="label">Chapitres</span>
+                                            <span class="value">${data.chapters}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-block">
+                                        <h4>Staff Technique</h4>
+                                        <div class="info-row">
+                                            <span class="label">Animation</span>
+                                            <span class="value">${data.animation}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">Direction Art.</span>
+                                            <span class="value">${data.art}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             `;
 
@@ -1128,7 +1429,7 @@
                                 flipContainer.remove();
                             });
 
-                            // Gérer le bouton retour
+                            // Ajouter la gestion du bouton retour
                             detailPage.querySelector('.back-button').addEventListener('click', () => {
                                 const newFlipContainer = document.createElement('div');
                                 newFlipContainer.className = 'page-flip-container';
@@ -1147,6 +1448,106 @@
                                     newFlipContainer.remove();
                                 });
                             });
+
+                            // Mise à jour des styles
+                            const style = document.createElement('style');
+                            style.textContent = `
+                                .detail-content {
+                                    padding: 30px;
+                                    height: 100%;
+                                    overflow-y: auto;
+                                }
+
+                                .episode-header {
+                                    text-align: center;
+                                    margin-bottom: 40px;
+                                }
+
+                                .episode-title {
+                                    font-family: 'One Piece', sans-serif;
+                                    font-size: 2.5em;
+                                    color: #8B4513;
+                                    margin-bottom: 10px;
+                                }
+
+                                .episode-subtitle {
+                                    font-size: 1.3em;
+                                    color: #333;
+                                    margin-bottom: 15px;
+                                }
+
+                                .japanese-title {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    gap: 5px;
+                                }
+
+                                .kanji {
+                                    font-size: 1.2em;
+                                    color: #555;
+                                }
+
+                                .romaji {
+                                    font-size: 0.9em;
+                                    color: #666;
+                                    font-style: italic;
+                                }
+
+                                .info-block {
+                                    margin-bottom: 35px;
+                                    padding-bottom: 20px;
+                                    border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+                                }
+
+                                .info-block:last-child {
+                                    border-bottom: none;
+                                }
+
+                                .info-block h4 {
+                                    color: #8B4513;
+                                    font-size: 1.4em;
+                                    margin-bottom: 20px;
+                                    font-weight: bold;
+                                }
+
+                                .info-row {
+                                    display: flex;
+                                    margin-bottom: 15px;
+                                    line-height: 1.5;
+                                }
+
+                                .info-row .label {
+                                    flex: 0 0 100px;
+                                    color: #666;
+                                }
+
+                                .info-row .value {
+                                    flex: 1;
+                                    padding-left: 20px;
+                                    color: #333;
+                                }
+
+                                .back-button {
+                                    position: absolute;
+                                    top: 20px;
+                                    left: 20px;
+                                    padding: 8px 15px;
+                                    background: none;
+                                    color: #8B4513;
+                                    border: 2px solid #8B4513;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    transition: all 0.3s;
+                                }
+
+                                .back-button:hover {
+                                    background: #8B4513;
+                                    color: white;
+                                }
+                            `;
+                            document.head.appendChild(style);
                         } else {
                             alert(`Épisode ${number} non trouvé dans le CSV`);
                         }
@@ -1156,83 +1557,204 @@
                         alert(`Erreur lors de la recherche de l'épisode ${number}`);
                     });
             } else {
-                // Pour les chapitres, garder le comportement actuel
-                alert(`Chapitre ${number} sélectionné`);
-                
-                const book = document.querySelector('.book');
-                const pages = document.querySelector('.pages-container');
-                
-                // ... reste du code pour l'affichage des chapitres ...
-                // Créer le conteneur de l'animation
-                const flipContainer = document.createElement('div');
-                flipContainer.className = 'page-flip-container';
-                
-                // Créer la page qui tourne
-                const flippingPage = document.createElement('div');
-                flippingPage.className = 'flipping-page';
-                flipContainer.appendChild(flippingPage);
-                book.appendChild(flipContainer);
-                
-                // Créer la page de détails
-                const detailPage = document.createElement('div');
-                detailPage.className = 'detail-page';
+                // Pour les chapitres, chercher d'abord les correspondances
+                fetch(`/api/episode/all`)
+                    .then(response => response.json())
+                    .then(episodes => {
+                        let matchingEpisodes = [];
+                        const seenEpisodes = new Set();
 
-                // Créer la page gauche
-                const leftPage = document.createElement('div');
-                leftPage.className = 'detail-left-page';
-                leftPage.innerHTML = `
-                    <button class="back-button">← Retour</button>
-                    <h2>${type} ${number}</h2>
-                    <div class="detail-content">
-                        <p>Informations sur le chapitre ${number}</p>
-                    </div>
-                `;
+                        episodes.forEach(episode => {
+                            if (episode.chapters) {
+                                // Diviser la chaîne de chapitres en nombres individuels
+                                const chapterNumbers = episode.chapters.split(',').map(n => n.trim());
+                                
+                                // Vérifier si le numéro de chapitre recherché est présent
+                                if (chapterNumbers.includes(number.toString())) {
+                                    const episodeKey = `${episode.episode_number}-${episode.title}`;
+                                    // Vérifier que l'épisode n'est pas "nan" et qu'il n'a pas déjà été vu
+                                    if (!seenEpisodes.has(episodeKey) && 
+                                        episode.episode_number && 
+                                        episode.episode_number.toLowerCase() !== 'nan' && 
+                                        episode.title && 
+                                        episode.title.toLowerCase() !== 'nan') {
+                                        matchingEpisodes.push({
+                                            episode: episode.episode_number,
+                                            title: episode.title
+                                        });
+                                        seenEpisodes.add(episodeKey);
+                                    }
+                                }
+                            }
+                        });
 
-                // Créer la page droite
-                const rightPage = document.createElement('div');
-                rightPage.className = 'detail-right-page';
-                rightPage.innerHTML = `
-                    <div class="detail-content">
-                        <p>Détails du chapitre ${number}</p>
-                    </div>
-                `;
+                        if (matchingEpisodes.length > 0) {
+                            // Trier les épisodes par numéro
+                            matchingEpisodes.sort((a, b) => {
+                                const numA = parseInt(a.episode);
+                                const numB = parseInt(b.episode);
+                                return numA - numB;
+                            });
 
-                // Ajouter les pages au conteneur
-                detailPage.appendChild(leftPage);
-                detailPage.appendChild(rightPage);
-                book.appendChild(detailPage);
+                            let message = matchingEpisodes.length === 1 
+                                ? `Ce chapitre est adapté dans l'épisode :`
+                                : `Ce chapitre est adapté dans les épisodes :`;
+                            
+                            message += '\n\n' + matchingEpisodes.map(ep => 
+                                `Épisode ${ep.episode}: ${ep.title}`
+                            ).join('\n');
+                        } else {
+                            //alert(`Aucun épisode trouvé pour le chapitre ${number}`);
+                        }
 
-                // Séquence d'animation
-                requestAnimationFrame(() => {
-                    flippingPage.classList.add('flip');
-                });
+                        // Continuer avec l'affichage des détails du chapitre
+                        const book = document.querySelector('.book');
+                        const pages = document.querySelector('.pages-container');
+                        
+                        // Créer le conteneur de l'animation
+                        const flipContainer = document.createElement('div');
+                        flipContainer.className = 'page-flip-container';
+                        
+                        const flippingPage = document.createElement('div');
+                        flippingPage.className = 'flipping-page';
+                        flipContainer.appendChild(flippingPage);
+                        book.appendChild(flipContainer);
+                        
+                        // Créer la page de détails
+                        const detailPage = document.createElement('div');
+                        detailPage.className = 'detail-page';
 
-                // Attendre la fin de l'animation
-                flippingPage.addEventListener('animationend', () => {
-                    pages.style.display = 'none';
-                    detailPage.style.display = 'block';
-                    flipContainer.remove();
-                });
+                        // Créer la page gauche
+                        const leftPage = document.createElement('div');
+                        leftPage.className = 'detail-left-page';
+                        leftPage.innerHTML = `
+                            <button class="back-button">← Retour</button>
+                            <div class="detail-content">
+                                <div class="episode-header">
+                                    <h2 class="episode-title">Chapitre ${number}</h2>
+                                </div>
+                                <div class="info-block">
+                                    <h4>Adaptation</h4>
+                                    <p style="margin-bottom: 20px; color: #555; line-height: 1.6;">
+                                        ${matchingEpisodes.length === 0 
+                                            ? "Ce chapitre n'a pas encore été adapté en anime."
+                                            : matchingEpisodes.length === 1
+                                                ? "Ce chapitre a été adapté dans un seul épisode de l'anime."
+                                                : `Ce chapitre a été adapté à travers ${matchingEpisodes.length} épisodes de l'anime.`
+                                        }
+                                    </p>
+                                    <div class="info-row">
+                                        <span class="label">Épisodes</span>
+                                        <span class="value">${matchingEpisodes.map(m => m.episode).join(', ') || 'Aucun'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
 
-                // Gérer le bouton retour
-                detailPage.querySelector('.back-button').addEventListener('click', () => {
-                    const newFlipContainer = document.createElement('div');
-                    newFlipContainer.className = 'page-flip-container';
-                    const newFlippingPage = document.createElement('div');
-                    newFlippingPage.className = 'flipping-page';
-                    newFlipContainer.appendChild(newFlippingPage);
-                    book.appendChild(newFlipContainer);
+                        // Créer la page droite
+                        const rightPage = document.createElement('div');
+                        rightPage.className = 'detail-right-page';
+                        rightPage.innerHTML = `
+                            <div class="detail-content">
+                                <div class="info-block">
+                                    <h4>Détails des adaptations</h4>
+                                    ${matchingEpisodes.length > 0 
+                                        ? matchingEpisodes.map(m => `
+                                            <div class="info-row">
+                                                <span class="label">Épisode <span class="episode-link" onclick="fetch('/api/episode/${m.episode}')
+                                                    .then(r => r.json())
+                                                    .then(data => { 
+                                                        if(data.found) { 
+                                                            showDetails('episode', data.episode_number);
+                                                        } 
+                                                    })">${m.episode}</span></span>
+                                                <span class="value">${m.title}</span>
+                                            </div>
+                                        `).join('')
+                                        : '<div class="info-row"><span class="value">Aucun épisode trouvé</span></div>'
+                                    }
+                                </div>
+                            </div>
+                        `;
 
-                    requestAnimationFrame(() => {
-                        newFlippingPage.classList.add('flip-reverse');
+                        // Ajouter les pages au conteneur
+                        detailPage.appendChild(leftPage);
+                        detailPage.appendChild(rightPage);
+                        book.appendChild(detailPage);
+
+                        // Animation
+                        requestAnimationFrame(() => {
+                            flippingPage.classList.add('flip');
+                        });
+
+                        flippingPage.addEventListener('animationend', () => {
+                            pages.style.display = 'none';
+                            detailPage.style.display = 'block';
+                            flipContainer.remove();
+                        });
+
+                        // Gestion du bouton retour
+                        detailPage.querySelector('.back-button').addEventListener('click', () => {
+                            const newFlipContainer = document.createElement('div');
+                            newFlipContainer.className = 'page-flip-container';
+                            const newFlippingPage = document.createElement('div');
+                            newFlippingPage.className = 'flipping-page';
+                            newFlipContainer.appendChild(newFlippingPage);
+                            book.appendChild(newFlipContainer);
+
+                            requestAnimationFrame(() => {
+                                newFlippingPage.classList.add('flip-reverse');
+                            });
+
+                            newFlippingPage.addEventListener('animationend', () => {
+                                detailPage.style.display = 'none';
+                                pages.style.display = 'flex';
+                                newFlipContainer.remove();
+                            });
+                        });
+
+                        // Ajouter du style uniquement pour les liens d'épisodes dans les détails
+                        const detailStyle = document.createElement('style');
+                        detailStyle.textContent = `
+                            .detail-content .episode-link {
+                                cursor: pointer;
+                                color: #D35400;
+                                text-decoration: underline;
+                                transition: color 0.3s;
+                            }
+                            .detail-content .episode-link:hover {
+                                color: #A04000;
+                            }
+                            .episode-overlay {
+                                position: fixed;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                z-index: 1000;
+                                background: white;
+                                padding: 20px;
+                                border-radius: 10px;
+                                box-shadow: 0 0 20px rgba(0,0,0,0.3);
+                                max-width: 80%;
+                                max-height: 80vh;
+                                overflow-y: auto;
+                            }
+                            .overlay-background {
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                background: rgba(0,0,0,0.5);
+                                z-index: 999;
+                            }
+                        `;
+                        document.head.appendChild(detailStyle);
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert(`Erreur lors de la recherche des épisodes pour le chapitre ${number}`);
                     });
-
-                    newFlippingPage.addEventListener('animationend', () => {
-                        detailPage.style.display = 'none';
-                        pages.style.display = 'flex';
-                        newFlipContainer.remove();
-                    });
-                });
             }
         }
 

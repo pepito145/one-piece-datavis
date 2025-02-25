@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Piece - Épisodes</title>
+    <link rel="icon" type="image/png" href="static/images/strawhat-logo.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: 'One Piece';
+            src: url('/static/font/one_piece.ttf') format('truetype');
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to right, #1a1a1a, #2c2c2c);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .site-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'One Piece', sans-serif;
+        }
+
+        .site-title img {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 5px 15px;
+            width: 300px;
+            margin-left: auto;
+            transition: all 0.3s ease;
+        }
+
+        .search-container:focus-within {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .search-icon {
+            color: #7AB51D;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        #searchInput {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            padding: 8px 0;
+            outline: none;
+        }
+
+        #searchInput::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .episodes-container {
+            margin-top: 80px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .episode-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .episode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .episode-number {
+            font-family: 'One Piece', sans-serif;
+            font-size: 1.5em;
+            color: #D35400;
+            margin-bottom: 10px;
+        }
+
+        .episode-title {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background: #f4e4bc;
+            width: 80%;
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #8B4513;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+        }
+
+        .episode-details {
+            margin-top: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+        }
+
+        .detail-section h3 {
+            color: #8B4513;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            flex: 0 0 120px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="site-title">
+            <img src="static/images/strawhat-logo.png" alt="Logo One Piece">
+            <span>One Piece</span>
+        </a>
+        <div class="nav-links">
+            <a href="/#volumes" class="nav-link">Volumes</a>
+            <a href="/episodes" class="nav-link">Épisodes</a>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher un épisode...">
+            </div>
+        </div>
+    </header>
+
+    <div class="episodes-container" id="episodesGrid">
+        {% for episode in episodes %}
+        <div class="episode-card" data-episode="{{ episode.episode_number }}">
+            <div class="episode-number">Épisode {{ episode.episode_number }}</div>
+            <div class="episode-title">{{ episode.title }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="modal" id="episodeModal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <div class="episode-details">
+                <!-- Le contenu sera rempli dynamiquement par JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const episodesGrid = document.getElementById('episodesGrid');
+            const modal = document.getElementById('episodeModal');
+            const closeModal = document.querySelector('.close-modal');
+
+            // Vérifier s'il y a un paramètre de recherche dans l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+            if (searchQuery) {
+                // Remplir le champ de recherche
+                searchInput.value = searchQuery;
+                // Déclencher la recherche
+                performSearch(searchQuery);
+
+                // Animation d'entrée
+                episodesGrid.style.opacity = '0';
+                episodesGrid.style.transform = 'translateY(20px)';
+                episodesGrid.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    episodesGrid.style.opacity = '1';
+                    episodesGrid.style.transform = 'translateY(0)';
+                }, 100);
+            }
+
+            // Fonction de recherche
+            function performSearch(query) {
+                fetch(`/search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(episodes => {
+                        episodesGrid.innerHTML = episodes.length > 0 
+                            ? episodes.map(episode => `
+                                <div class="episode-card" data-episode="${episode.episode_number}">
+                                    <div class="episode-number">Épisode ${episode.episode_number}</div>
+                                    <div class="episode-title">${episode.title}</div>
+                                </div>
+                            `).join('')
+                            : '<div class="no-results">Aucun épisode trouvé</div>';
+                        
+                        // Réattacher les event listeners
+                        attachEpisodeClickHandlers();
+                    });
+            }
+
+            // Fonction de recherche sur input
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                performSearch(query);
+            });
+
+            // Fonction pour attacher les event listeners aux cartes d'épisodes
+            function attachEpisodeClickHandlers() {
+                document.querySelectorAll('.episode-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const episodeNumber = this.dataset.episode;
+                        fetch(`/api/episode/${episodeNumber}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.found) {
+                                    const modalContent = `
+                                        <h2 class="episode-number">Épisode ${data.episode_number}</h2>
+                                        <div class="detail-section">
+                                            <h3>Informations générales</h3>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Titre</div>
+                                                <div class="detail-value">${data.title}</div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Titre japonais</div>
+                                                <div class="detail-value">${data.kanji}<br>${data.romaji}</div>
+                                            </div>
+                                        </div>
+                                        <div class="detail-section">
+                                            <h3>Production</h3>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Scénario</div>
+                                                <div class="detail-value">${data.screenplay}</div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Direction</div>
+                                                <div class="detail-value">${data.direction}</div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Animation</div>
+                                                <div class="detail-value">${data.animation}</div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Direction Art.</div>
+                                                <div class="detail-value">${data.art}</div>
+                                            </div>
+                                        </div>
+                                        <div class="detail-section">
+                                            <h3>Adaptation</h3>
+                                            <div class="detail-row">
+                                                <div class="detail-label">Chapitres</div>
+                                                <div class="detail-value">${data.chapters}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    document.querySelector('.episode-details').innerHTML = modalContent;
+                                    modal.style.display = 'block';
+                                }
+                            });
+                    });
+                });
+            }
+
+            // Attacher les event listeners initiaux
+            attachEpisodeClickHandlers();
+
+            // Fermer la modal
+            closeModal.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // Fermer la modal en cliquant en dehors
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

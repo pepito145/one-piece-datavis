@@ -168,13 +168,63 @@ def index():
     
     return render_template('index.html', volume_data=volume_data, episode_details=episode_details)
 
-@app.route('/search', methods=['POST'])
+@app.route('/episodes')
+def episodes_page():
+    # Convertir les épisodes en format plus détaillé
+    episodes_list = []
+    for _, row in episodes_df.iterrows():
+        episode = {
+            'episode_number': str(row['Episode_Number']).replace('.0', ''),
+            'title': str(row['Title']) if pd.notna(row['Title']) else 'Non disponible',
+            'screenplay': str(row['Screenplay']) if pd.notna(row['Screenplay']) else 'Non disponible',
+            'direction': str(row['Direction']) if pd.notna(row['Direction']) else 'Non disponible',
+            'animation': str(row['Animation']) if pd.notna(row['Animation']) else 'Non disponible',
+            'art': str(row['Art']) if pd.notna(row['Art']) else 'Non disponible',
+            'kanji': str(row['Kanji']) if pd.notna(row['Kanji']) else 'Non disponible',
+            'romaji': str(row['Romaji']) if pd.notna(row['Romaji']) else 'Non disponible'
+        }
+        episodes_list.append(episode)
+    
+    return render_template('episodes.html', episodes=episodes_list)
+
+@app.route('/search', methods=['GET'])
 def search():
-    query = request.form.get('query', '').lower()
+    query = request.args.get('query', '').lower()
     if query:
-        filtered = [ep for ep in episodes if query in str(ep["title"]).lower()]
-        return render_template('search_results.html', episodes=filtered)
-    return render_template('search_results.html', episodes=episodes)
+        filtered_episodes = []
+        for _, row in episodes_df.iterrows():
+            title = str(row['Title']).lower() if pd.notna(row['Title']) else ''
+            episode_num = str(row['Episode_Number']).replace('.0', '')
+            
+            if query in title or query in episode_num:
+                episode = {
+                    'episode_number': episode_num,
+                    'title': str(row['Title']) if pd.notna(row['Title']) else 'Non disponible',
+                    'screenplay': str(row['Screenplay']) if pd.notna(row['Screenplay']) else 'Non disponible',
+                    'direction': str(row['Direction']) if pd.notna(row['Direction']) else 'Non disponible',
+                    'animation': str(row['Animation']) if pd.notna(row['Animation']) else 'Non disponible',
+                    'art': str(row['Art']) if pd.notna(row['Art']) else 'Non disponible',
+                    'kanji': str(row['Kanji']) if pd.notna(row['Kanji']) else 'Non disponible',
+                    'romaji': str(row['Romaji']) if pd.notna(row['Romaji']) else 'Non disponible'
+                }
+                filtered_episodes.append(episode)
+        return jsonify(filtered_episodes)
+    return jsonify([])
+
+@app.route('/api/episode/all')
+def get_all_episodes():
+    episodes_list = []
+    for _, row in episodes_df.iterrows():
+        # Ne pas inclure les chapitres si c'est "nan"
+        chapters = str(row['Chapter_Numbers']) if pd.notna(row['Chapter_Numbers']) and str(row['Chapter_Numbers']).lower() != 'nan' else ''
+        
+        episode_data = {
+            'episode_number': str(row['Episode_Number']).replace('.0', '') if pd.notna(row['Episode_Number']) else '',
+            'title': str(row['Title']) if pd.notna(row['Title']) and str(row['Title']).lower() != 'nan' else '',
+            'chapters': chapters
+        }
+        episodes_list.append(episode_data)
+    return jsonify(episodes_list)
 
 @app.route('/api/episode/<episode_number>')
 def get_episode_details(episode_number):
@@ -194,13 +244,41 @@ def get_episode_details(episode_number):
     print(f"Résultat de la recherche: {len(episode)} lignes trouvées")
     if not episode.empty:
         episode_data = episode.iloc[0]
+        
+        # Fonction helper pour vérifier si une valeur est valide
+        def clean_value(value, default='Non disponible'):
+            if pd.notna(value) and str(value).lower() != 'nan':
+                return str(value)
+            return default
+        
+        # Nettoyer et dédupliquer les chapitres
+        chapters = clean_value(episode_data['Chapters'])
+        if chapters != 'Non disponible':
+            # Séparer les chapitres (ils sont séparés par ':::')
+            chapter_list = chapters.split(':::')
+            # Nettoyer chaque chapitre et enlever les doublons
+            clean_chapters = []
+            seen_chapters = set()
+            for chapter in chapter_list:
+                # Nettoyer le chapitre
+                clean_chapter = chapter.strip()
+                if clean_chapter and clean_chapter not in seen_chapters and clean_chapter.lower() != 'nan':
+                    clean_chapters.append(clean_chapter)
+                    seen_chapters.add(clean_chapter)
+            # Rejoindre les chapitres uniques
+            chapters = ' ::: '.join(clean_chapters) if clean_chapters else 'Non disponible'
+        
         return jsonify({
             "found": True,
-            "title": str(episode_data['Title']) if pd.notna(episode_data['Title']) else 'Titre non disponible',
+            "title": clean_value(episode_data['Title']),
             "episode_number": episode_number,
-            "screenplay": str(episode_data['Screenplay']) if pd.notna(episode_data['Screenplay']) else 'Non disponible',
-            "direction": str(episode_data['Direction']) if pd.notna(episode_data['Direction']) else 'Non disponible',
-            "chapters": str(episode_data['Chapters']) if pd.notna(episode_data['Chapters']) else 'Non disponible'
+            "screenplay": clean_value(episode_data['Screenplay']),
+            "direction": clean_value(episode_data['Direction']),
+            "animation": clean_value(episode_data['Animation']),
+            "art": clean_value(episode_data['Art']),
+            "chapters": chapters,
+            "kanji": clean_value(episode_data['Kanji']),
+            "romaji": clean_value(episode_data['Romaji'])
         })
     else:
         print(f"Épisode {episode_num} non trouvé")
