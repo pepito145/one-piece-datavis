@@ -5,33 +5,35 @@ import csv
 
 app = Flask(__name__)
 
-# Lecture du CSV avec pandas pour plus de simplicité
-df = pd.read_csv("static/data/onepiece_episode.csv", sep='\t')
+# Lecture du CSV des épisodes
+episodes_df = pd.read_csv("static/data/onepiece_episode.csv")
+
+# Convertir la colonne Episode_Number en string
+episodes_df['Episode_Number'] = episodes_df['Episode_Number'].astype(str)
+
+# Afficher les colonnes disponibles
+print("Colonnes disponibles dans le CSV:", episodes_df.columns.tolist())
 
 # Création de la liste des épisodes
 episodes = []
-for index, row in df.iterrows():
+for index, row in episodes_df.iterrows():
     try:
         # Extraire le numéro d'épisode
-        episode_num = row["Episode_num"]
-        if "Episode" in episode_num:
-            episode_num = episode_num.split("Episode ")[1].split()[0]
-            # Vérifier que c'est bien un nombre
-            int(episode_num)  # Test de conversion
-            
-            # S'assurer que le titre est une chaîne de caractères
-            title = str(row["Title"]) if pd.notna(row["Title"]) else ""
-            
-            episode = { 
-                "episode_number": episode_num,
-                "title": title
-            }
-            episodes.append(episode)
+        episode_num = str(row["Episode_Number"])
+        
+        # S'assurer que le titre est une chaîne de caractères
+        title = str(row["Title"]) if pd.notna(row["Title"]) else ""
+        
+        episode = { 
+            "episode_number": episode_num,
+            "title": title
+        }
+        episodes.append(episode)
     except:
         continue
 
 # Tri par numéro d'épisode
-episodes.sort(key=lambda x: int(x["episode_number"]))
+episodes.sort(key=lambda x: float(x["episode_number"]))
 
 print(f"Nombre d'épisodes chargés : {len(episodes)}")  # Debug
 
@@ -117,7 +119,6 @@ def index():
     for _, row in chapters_episodes_df.iterrows():
         chapter = int(row['Chapitre'])
         episodes_str = str(row['Épisodes'])
-        # Extraire les numéros d'épisodes (ignorer "Episode of East Blue" etc)
         episodes = []
         for ep in episodes_str.split(', '):
             if ep.startswith('Episode ') and not any(x in ep for x in ['of', 'East', 'Blue']):
@@ -143,7 +144,29 @@ def index():
             'episodes': episodes
         }
     
-    return render_template('index.html', volume_data=volume_data)
+    # Créer le dictionnaire des détails d'épisodes
+    episode_details = {}
+    
+    # Afficher un exemple de ligne pour debug
+    print("Exemple de ligne du DataFrame:")
+    print(episodes_df.iloc[0])
+    
+    for _, row in episodes_df.iterrows():
+        try:
+            episode_num = str(row['Episode_num'])  # Convertir en string pour éviter les problèmes de type
+            if episode_num.startswith('Episode '):
+                num = episode_num.split('Episode ')[1]
+                episode_details[num] = {
+                    'title': str(row['Title']) if pd.notna(row['Title']) else 'Titre non disponible',
+                    'release_date': str(row['Release_Date']) if pd.notna(row['Release_Date']) else 'Date non disponible',
+                    'duration': str(row['Duration']) if pd.notna(row['Duration']) else 'Durée non disponible',
+                    'synopsis': str(row['Synopsis']) if pd.notna(row['Synopsis']) else 'Synopsis non disponible'
+                }
+        except Exception as e:
+            print(f"Erreur lors du traitement d'une ligne: {e}")
+            continue
+    
+    return render_template('index.html', volume_data=volume_data, episode_details=episode_details)
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -155,16 +178,33 @@ def search():
 
 @app.route('/api/episode/<episode_number>')
 def get_episode_details(episode_number):
-    # Nettoyer le numéro d'épisode
-    episode_number = f"Episode {episode_number}"
+    # Vérifier si la colonne existe
+    if 'Episode_Number' not in episodes_df.columns:
+        print("La colonne Episode_Number n'existe pas!")
+        print("Colonnes disponibles:", episodes_df.columns.tolist())
+        return jsonify({"error": "Column not found"}), 404
     
-    # Chercher l'épisode dans le DataFrame
-    episode = df[df['Episode_num'] == episode_number].to_dict('records')
+    # Ajouter ".0" au numéro d'épisode pour correspondre au format du CSV
+    episode_num = str(episode_number) + ".0"
+    print(f"Recherche de l'épisode: {episode_num}")
     
-    if episode:
-        return jsonify(episode[0])
+    # Chercher l'épisode
+    episode = episodes_df[episodes_df['Episode_Number'] == episode_num]
+    
+    print(f"Résultat de la recherche: {len(episode)} lignes trouvées")
+    if not episode.empty:
+        episode_data = episode.iloc[0]
+        return jsonify({
+            "found": True,
+            "title": str(episode_data['Title']) if pd.notna(episode_data['Title']) else 'Titre non disponible',
+            "episode_number": episode_number,
+            "screenplay": str(episode_data['Screenplay']) if pd.notna(episode_data['Screenplay']) else 'Non disponible',
+            "direction": str(episode_data['Direction']) if pd.notna(episode_data['Direction']) else 'Non disponible',
+            "chapters": str(episode_data['Chapters']) if pd.notna(episode_data['Chapters']) else 'Non disponible'
+        })
     else:
-        return jsonify({"error": "Episode not found"}), 404
+        print(f"Épisode {episode_num} non trouvé")
+        return jsonify({"found": False})
 
 if __name__ == '__main__':
     app.run(debug=True)

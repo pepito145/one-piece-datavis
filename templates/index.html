@@ -1034,19 +1034,18 @@
         function attachClickHandlers() {
             const chapters = document.querySelectorAll('.chapter-item');
             const episodes = document.querySelectorAll('.episode-item');
-            const pages = document.querySelector('.pages-container');
 
             chapters.forEach(chapter => {
                 chapter.addEventListener('click', () => {
                     const chapterNum = chapter.dataset.chapter;
-                    showDetails('chapter', chapterNum);
+                    showDetails('chapitre', chapterNum);
                 });
             });
 
             episodes.forEach(episode => {
                 episode.addEventListener('click', () => {
                     const episodeNum = episode.dataset.episode;
-                    showDetails('episode', episodeNum);
+                    showDetails('épisode', episodeNum);
                 });
             });
         }
@@ -1061,79 +1060,180 @@
         }
 
         function showDetails(type, number) {
-            const book = document.querySelector('.book');
-            const pages = document.querySelector('.pages-container');
-            
-            // Créer le conteneur de l'animation
-            const flipContainer = document.createElement('div');
-            flipContainer.className = 'page-flip-container';
-            
-            // Créer la page qui tourne
-            const flippingPage = document.createElement('div');
-            flippingPage.className = 'flipping-page';
-            flipContainer.appendChild(flippingPage);
-            book.appendChild(flipContainer);
-            
-            // Créer la page de détails
-            const detailPage = document.createElement('div');
-            detailPage.className = 'detail-page';
+            if (type === 'épisode') {
+                // D'abord vérifier si l'épisode existe
+                fetch(`/api/episode/${number}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Afficher l'alerte de vérification
+                        if (data.found) {
+                            alert(`Épisode ${data.episode_number} trouvé !\n\n` +
+                                  `Titre: ${data.title}\n` +
+                                  `Scénario: ${data.screenplay}\n` +
+                                  `Direction: ${data.direction}\n` +
+                                  `Chapitres adaptés: ${data.chapters}`);
+                            
+                            // Puis continuer avec l'affichage des détails
+                            const book = document.querySelector('.book');
+                            const pages = document.querySelector('.pages-container');
+                            
+                            // Créer le conteneur de l'animation
+                            const flipContainer = document.createElement('div');
+                            flipContainer.className = 'page-flip-container';
+                            
+                            // Créer la page qui tourne
+                            const flippingPage = document.createElement('div');
+                            flippingPage.className = 'flipping-page';
+                            flipContainer.appendChild(flippingPage);
+                            book.appendChild(flipContainer);
+                            
+                            // Créer la page de détails
+                            const detailPage = document.createElement('div');
+                            detailPage.className = 'detail-page';
 
-            // Créer la page gauche
-            const leftPage = document.createElement('div');
-            leftPage.className = 'detail-left-page';
-            leftPage.innerHTML = `
-                <button class="back-button">← Retour</button>
-                <h2>${type} ${number}</h2>
-                <div class="detail-content">
-                    <p>Informations sur le ${type.toLowerCase()} ${number}...</p>
-                </div>
-            `;
+                            // Créer la page gauche
+                            const leftPage = document.createElement('div');
+                            leftPage.className = 'detail-left-page';
+                            leftPage.innerHTML = `
+                                <button class="back-button">← Retour</button>
+                                <h2>${type} ${number}</h2>
+                                <div class="detail-content">
+                                    <p>Informations sur l'épisode ${number}</p>
+                                </div>
+                            `;
 
-            // Créer la page droite
-            const rightPage = document.createElement('div');
-            rightPage.className = 'detail-right-page';
-            rightPage.innerHTML = `
-                <div class="detail-content">
-                    <p>Détails supplémentaires...</p>
-                </div>
-            `;
+                            // Créer la page droite
+                            const rightPage = document.createElement('div');
+                            rightPage.className = 'detail-right-page';
+                            rightPage.innerHTML = `
+                                <div class="detail-content">
+                                    <p>Détails de l'épisode ${number}</p>
+                                </div>
+                            `;
 
-            // Ajouter les pages au conteneur
-            detailPage.appendChild(leftPage);
-            detailPage.appendChild(rightPage);
-            book.appendChild(detailPage);
+                            // Ajouter les pages au conteneur
+                            detailPage.appendChild(leftPage);
+                            detailPage.appendChild(rightPage);
+                            book.appendChild(detailPage);
 
-            // Séquence d'animation
-            requestAnimationFrame(() => {
-                flippingPage.classList.add('flip');
-            });
+                            // Séquence d'animation
+                            requestAnimationFrame(() => {
+                                flippingPage.classList.add('flip');
+                            });
 
-            // Attendre la fin de l'animation
-            flippingPage.addEventListener('animationend', () => {
-                pages.style.display = 'none';
-                detailPage.style.display = 'block';
-                flipContainer.remove();
-            });
+                            // Attendre la fin de l'animation
+                            flippingPage.addEventListener('animationend', () => {
+                                pages.style.display = 'none';
+                                detailPage.style.display = 'block';
+                                flipContainer.remove();
+                            });
 
-            // Gérer le bouton retour
-            detailPage.querySelector('.back-button').addEventListener('click', () => {
-                const newFlipContainer = document.createElement('div');
-                newFlipContainer.className = 'page-flip-container';
-                const newFlippingPage = document.createElement('div');
-                newFlippingPage.className = 'flipping-page';
-                newFlipContainer.appendChild(newFlippingPage);
-                book.appendChild(newFlipContainer);
+                            // Gérer le bouton retour
+                            detailPage.querySelector('.back-button').addEventListener('click', () => {
+                                const newFlipContainer = document.createElement('div');
+                                newFlipContainer.className = 'page-flip-container';
+                                const newFlippingPage = document.createElement('div');
+                                newFlippingPage.className = 'flipping-page';
+                                newFlipContainer.appendChild(newFlippingPage);
+                                book.appendChild(newFlipContainer);
 
+                                requestAnimationFrame(() => {
+                                    newFlippingPage.classList.add('flip-reverse');
+                                });
+
+                                newFlippingPage.addEventListener('animationend', () => {
+                                    detailPage.style.display = 'none';
+                                    pages.style.display = 'flex';
+                                    newFlipContainer.remove();
+                                });
+                            });
+                        } else {
+                            alert(`Épisode ${number} non trouvé dans le CSV`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert(`Erreur lors de la recherche de l'épisode ${number}`);
+                    });
+            } else {
+                // Pour les chapitres, garder le comportement actuel
+                alert(`Chapitre ${number} sélectionné`);
+                
+                const book = document.querySelector('.book');
+                const pages = document.querySelector('.pages-container');
+                
+                // ... reste du code pour l'affichage des chapitres ...
+                // Créer le conteneur de l'animation
+                const flipContainer = document.createElement('div');
+                flipContainer.className = 'page-flip-container';
+                
+                // Créer la page qui tourne
+                const flippingPage = document.createElement('div');
+                flippingPage.className = 'flipping-page';
+                flipContainer.appendChild(flippingPage);
+                book.appendChild(flipContainer);
+                
+                // Créer la page de détails
+                const detailPage = document.createElement('div');
+                detailPage.className = 'detail-page';
+
+                // Créer la page gauche
+                const leftPage = document.createElement('div');
+                leftPage.className = 'detail-left-page';
+                leftPage.innerHTML = `
+                    <button class="back-button">← Retour</button>
+                    <h2>${type} ${number}</h2>
+                    <div class="detail-content">
+                        <p>Informations sur le chapitre ${number}</p>
+                    </div>
+                `;
+
+                // Créer la page droite
+                const rightPage = document.createElement('div');
+                rightPage.className = 'detail-right-page';
+                rightPage.innerHTML = `
+                    <div class="detail-content">
+                        <p>Détails du chapitre ${number}</p>
+                    </div>
+                `;
+
+                // Ajouter les pages au conteneur
+                detailPage.appendChild(leftPage);
+                detailPage.appendChild(rightPage);
+                book.appendChild(detailPage);
+
+                // Séquence d'animation
                 requestAnimationFrame(() => {
-                    newFlippingPage.classList.add('flip-reverse');
+                    flippingPage.classList.add('flip');
                 });
 
-                newFlippingPage.addEventListener('animationend', () => {
-                    detailPage.style.display = 'none';
-                    pages.style.display = 'flex';
-                    newFlipContainer.remove();
+                // Attendre la fin de l'animation
+                flippingPage.addEventListener('animationend', () => {
+                    pages.style.display = 'none';
+                    detailPage.style.display = 'block';
+                    flipContainer.remove();
                 });
-            });
+
+                // Gérer le bouton retour
+                detailPage.querySelector('.back-button').addEventListener('click', () => {
+                    const newFlipContainer = document.createElement('div');
+                    newFlipContainer.className = 'page-flip-container';
+                    const newFlippingPage = document.createElement('div');
+                    newFlippingPage.className = 'flipping-page';
+                    newFlipContainer.appendChild(newFlippingPage);
+                    book.appendChild(newFlipContainer);
+
+                    requestAnimationFrame(() => {
+                        newFlippingPage.classList.add('flip-reverse');
+                    });
+
+                    newFlippingPage.addEventListener('animationend', () => {
+                        detailPage.style.display = 'none';
+                        pages.style.display = 'flex';
+                        newFlipContainer.remove();
+                    });
+                });
+            }
         }
 
         function showEpisodeDetails(episodeNumber) {
